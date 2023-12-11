@@ -1,0 +1,59 @@
+function checkCashRegister(price, cash, cashInDrawer) {
+  const currencyUnits = {
+    "PENNY": 0.01,
+    "NICKEL": 0.05,
+    "DIME": 0.1,
+    "QUARTER": 0.25,
+    "ONE": 1,
+    "FIVE": 5,
+    "TEN": 10,
+    "TWENTY": 20,
+    "ONE HUNDRED": 100
+  };
+
+  let remainingChange = cash - price;
+  let changeArray = [];
+
+  for (let i = cashInDrawer.length - 1; i >= 0; i--) {
+    const currencyUnit = cashInDrawer[i][0];
+    const unitValue = currencyUnits[currencyUnit];
+    const availableAmount = cashInDrawer[i][1];
+    const unitCount =(availableAmount / unitValue);
+
+    if (unitValue <= remainingChange) //otherwise next currency
+    
+    {
+      let usedCount = 0;
+
+      while (unitValue <= remainingChange && usedCount < unitCount) 
+      {
+        remainingChange =remainingChange- unitValue;
+
+        remainingChange = Math.round(remainingChange * 100) / 100; 
+        
+        usedCount++;
+      }
+
+      if (usedCount > 0) 
+      {
+        changeArray.push([currencyUnit, usedCount * unitValue]);
+      }
+    }
+
+  } //end of forloop and after that
+
+  if (remainingChange > 0) {
+    return { status: "INSUFFICIENT_FUNDS", change: [] };
+  }
+
+  let totalChange = changeArray.reduce((acc, current) => acc + current[1], 0);
+  let totalCashInDrawer = cashInDrawer.reduce((acc, current) => acc + current[1], 0);
+
+  if (totalChange === totalCashInDrawer) {
+    return { status: "CLOSED", change: cashInDrawer };
+  }
+
+  return { status: "OPEN", change: changeArray };
+}
+
+
